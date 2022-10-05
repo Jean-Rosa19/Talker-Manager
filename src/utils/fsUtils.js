@@ -8,11 +8,17 @@ async function readTalkerFile() {
   // tratamento de excessão com try e catch
   try {
     const data = await fs.readFile(path);
-    const listaPessoas = JSON.parse(data);
-    return listaPessoas;
+    const peopleList = JSON.parse(data);
+    return peopleList;
   } catch (error) {
     console.error(`Erro na leitura do arquivo: ${error}`);
   }
 }
 
-module.exports = { readTalkerFile };
+async function findPersonID(idPerson) {
+  const listaPessoas = await readTalkerFile();
+  const pessoa = listaPessoas.find(({ id }) => id === Number(idPerson));
+    return pessoa;
+}
+
+module.exports = { readTalkerFile, findPersonID };
