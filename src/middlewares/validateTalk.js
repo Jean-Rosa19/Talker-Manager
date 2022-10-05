@@ -1,5 +1,5 @@
 function validateTalk(talkValue, res, value) {
-    if (!talkValue) {
+    if (talkValue === undefined) {
       return res.status(400).json({ message: `O campo "${value}" é obrigatório` });
     }
   }

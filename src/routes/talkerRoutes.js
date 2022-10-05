@@ -5,6 +5,7 @@ const {
   readTalkerFile,
   findPersonById,
   writeNewPerson,
+  editPersonById,
 } = require('../utils/fsUtils');
 
 const validateToken = require('../middlewares/validateToken');
@@ -17,26 +18,10 @@ const validateRate = require('../middlewares/ValidateRate');
 const HTTP_OK_STATUS = 200;
 const HTTP_CREATED_STATUS = 201;
 const HTTP_NOT_FOUND_STATUS = 404;
-
 router.get('/', async (_req, res) => {
   const personsList = await readTalkerFile();
   res.status(HTTP_OK_STATUS).json(personsList);
 });
-
-router.post(
-  '/',
-  validateToken,
-  validateName,
-  validateAge,
-  validateTalk,
-  validateWatchedAt,
-  validateRate,
-  async (req, res) => {
-    const newPerson = req.body;
-    const newPersonWithId = await writeNewPerson(newPerson);
-    res.status(HTTP_CREATED_STATUS).json(newPersonWithId);
-  },
-);
 
 router.get('/:id', async (req, res) => {
   const { id } = req.params;
@@ -48,4 +33,27 @@ router.get('/:id', async (req, res) => {
   }
   res.status(HTTP_OK_STATUS).json(person);
 });
+
+router.use(
+  validateToken,
+  validateName,
+  validateAge,
+  validateTalk,
+  validateWatchedAt,
+  validateRate,
+);
+
+router.post('/', async (req, res) => {
+  const newPerson = req.body;
+  const newPersonWithId = await writeNewPerson(newPerson);
+  res.status(HTTP_CREATED_STATUS).json(newPersonWithId);
+});
+
+router.put('/:id', async (req, res) => {
+  const newInformations = req.body;
+  const { id } = req.params;
+  const editedPerson = await editPersonById(newInformations, id);
+  res.status(HTTP_OK_STATUS).json(editedPerson);
+});
+
 module.exports = router;
