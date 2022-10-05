@@ -1,24 +1,34 @@
 const fs = require('fs').promises;
 const { resolve } = require('path');
 
-const caminhoTalker = '../talker.json';
-
+const TALKER_FILE_PATH = '../talker.json';
 async function readTalkerFile() {
-  const path = resolve(__dirname, caminhoTalker);
-  // tratamento de excessão com try e catch
+  const path = resolve(__dirname, TALKER_FILE_PATH);
   try {
     const data = await fs.readFile(path);
-    const peopleList = JSON.parse(data);
-    return peopleList;
+    const personsList = JSON.parse(data);
+    return personsList;
   } catch (error) {
-    console.error(`Erro na leitura do arquivo: ${error}`);
+    console.error(`Error at reading file: ${error}`);
+  }
+}
+async function findPersonById(personId) {
+  const personsList = await readTalkerFile();
+  const person = personsList.find(({ id }) => id === Number(personId));
+  return person;
+}
+
+async function writeNewPerson(newPerson) {
+  const path = resolve(__dirname, TALKER_FILE_PATH);
+  try {
+    const oldPersons = await readTalkerFile();
+    const newPersonWithId = { id: oldPersons.length + 1, ...newPerson };
+    const allPersons = JSON.stringify([...oldPersons, newPersonWithId]);
+    await fs.writeFile(path, allPersons);
+    return newPersonWithId;
+  } catch (error) {
+    console.error(`Error writing in file: ${error}`);
   }
 }
 
-async function findPersonID(idPerson) {
-  const listaPessoas = await readTalkerFile();
-  const pessoa = listaPessoas.find(({ id }) => id === Number(idPerson));
-    return pessoa;
-}
-
-module.exports = { readTalkerFile, findPersonID };
+module.exports = { readTalkerFile, findPersonById, writeNewPerson };

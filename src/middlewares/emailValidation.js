@@ -11,7 +11,7 @@ function emailValidation(req, res, next) {
         return res.status(400).json({ message: 'O "email" deve ter o formato "email@email.com"' });
     }
 
-    return next();    
+    next();    
 }   
 
 module.exports = emailValidation;
