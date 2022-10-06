@@ -6,6 +6,7 @@ const {
   findPersonById,
   writeNewPerson,
   editPersonById,
+  deletePersonById,
 } = require('../utils/fsUtils');
 
 const validateToken = require('../middlewares/validateToken');
@@ -18,6 +19,7 @@ const validateRate = require('../middlewares/ValidateRate');
 const HTTP_OK_STATUS = 200;
 const HTTP_CREATED_STATUS = 201;
 const HTTP_NOT_FOUND_STATUS = 404;
+const HTTP_NO_CONTENT_STATUS = 204;
 router.get('/', async (_req, res) => {
   const personsList = await readTalkerFile();
   res.status(HTTP_OK_STATUS).json(personsList);
@@ -32,6 +34,14 @@ router.get('/:id', async (req, res) => {
       .json({ message: 'Pessoa palestrante não encontrada' });
   }
   res.status(HTTP_OK_STATUS).json(person);
+});
+
+router.use(validateToken);
+
+router.delete('/:id', async (req, res) => {
+  const { id } = req.params;
+  await deletePersonById(id);
+  res.status(HTTP_NO_CONTENT_STATUS).end();
 });
 
 router.use(

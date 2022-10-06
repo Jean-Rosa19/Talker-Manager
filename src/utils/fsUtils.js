@@ -4,6 +4,8 @@ const { resolve } = require('path');
 const TALKER_FILE_PATH = '../talker.json';
 const resolvedPath = resolve(__dirname, TALKER_FILE_PATH);
 
+// aqui se encontram as funções da aplicação
+
 async function readTalkerFile() {
   try {
     const data = await fs.readFile(resolvedPath);
@@ -44,9 +46,20 @@ async function editPersonById(newInformations, personId) {
   }
 }
 
+async function deletePersonById(personId) {
+  try {
+    const oldPersons = await readTalkerFile();
+    const allPersons = oldPersons.filter(({ id }) => id !== Number(personId));
+    await fs.writeFile(resolvedPath, JSON.stringify(allPersons));
+  } catch (error) {
+    console.error(`Error writing in file: ${error}`);
+  }
+}
+
 module.exports = {
   readTalkerFile,
   findPersonById,
   writeNewPerson,
   editPersonById,
+  deletePersonById,
 };
