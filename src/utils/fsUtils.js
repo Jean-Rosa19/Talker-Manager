@@ -56,10 +56,18 @@ async function deletePersonById(personId) {
   }
 }
 
+async function findPersonByName(searchTerm) {
+  const allPersons = await readTalkerFile();
+  const filteredPersons = allPersons.filter(({ name }) =>
+  name.toLowerCase().includes(searchTerm.toLowerCase()));
+  return filteredPersons;
+}
+
 module.exports = {
   readTalkerFile,
   findPersonById,
   writeNewPerson,
   editPersonById,
   deletePersonById,
+  findPersonByName,
 };
